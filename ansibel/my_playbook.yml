@@ -1,0 +1,27 @@
+---
+- name: Deploy App with Docker
+  hosts: ec2_instances
+  become: yes  # Run tasks with elevated privileges (sudo)
+
+  tasks:
+    # Task 1: Install Docker
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+
+    # Task 2: Start the Docker service
+    - name: Start Docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    # Task 3: Pull Docker image from Docker Hub
+    - name: Pull Docker image
+      command: docker pull talibro/simple-java-maven-app:latest
+
+    # Task 4: Run Docker container
+    - name: Run Docker container
+      command: docker run -d -p 8080:8080 talibro/simple-java-maven-app:latest
+
