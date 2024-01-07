@@ -19,17 +19,12 @@ jobs:
         distribution: 'adopt'
         java-version: '11'
 
-    - name: Configure Git Identity
+    - name: Increment Patch Version
       run: |
-        git config user.email "talibroder@gmail.com"
-        git config user.name "talibroder"
-
-
-    - name: Increment Maven Version
-      run: |
-        mvn versions:set -DnewVersion=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+        mvn versions:set -DnewVersion=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout).1
         git add pom.xml
-        git commit -m "Increment Maven version [skip ci]"
+        git commit -m "Increment patch version [skip ci]" || true
+        git push origin main || true
 
     - name: Build and Push Docker Image
       run: |
@@ -40,6 +35,3 @@ jobs:
     - name: Push to GitHub
       run: |
         git push origin main
-
-    # Optionally, you may want to trigger another workflow or do additional steps after pushing to GitHub.
-    # For example, you could trigger a deployment workflow, create a GitHub release, etc.
