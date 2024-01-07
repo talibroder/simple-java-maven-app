@@ -49,3 +49,14 @@ jobs:
     - name: Push to GitHub
       run: |
         git push origin master
+
+    - name: Set up Ansible
+      uses: appleboy/ansible-action@v2
+      with:
+        path: ./ansible
+
+    - name: Run Ansible playbook
+      run: ansible-playbook -i ansible/inventory.ini ansible/my_playbook.yml
+      env:
+        PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
