@@ -22,10 +22,13 @@ jobs:
     - name: Increment Patch Version
       run: |
         # Increment the patch version in the pom.xml file
-        NEW_VERSION_NUMBER=$(mvn build-helper:parse-version help:evaluate -Dexpression=project.version -q -DforceStdout | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')
-        mvn versions:set -DnewVersion=$NEW_VERSION_NUMBER
+        mvn build-helper:parse-version versions:set \
+        -DnewVersion=${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.nextIncrementalVersion} \
+        versions:commit
+
+    - name: Push Patch Version   
         git add pom.xml
-        git commit -m "Update version in pom.xml to $NEW_VERSION_NUMBER [skip ci]" || true
+        git commit -m "Update version in pom.xml"
         git push origin master
         
     - name: Build and Push Docker Image
