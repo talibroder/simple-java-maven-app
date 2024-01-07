@@ -1,12 +1,29 @@
-FROM jenkins/jenkins:2.426.2-jdk17
-USER root
-RUN apt-get update && apt-get install -y lsb-release
-RUN curl -fsSLo /usr/share/keyrings/docker-archive-keyring.asc \
-  https://download.docker.com/linux/debian/gpg
-RUN echo "deb [arch=$(dpkg --print-architecture) \
-  signed-by=/usr/share/keyrings/docker-archive-keyring.asc] \
-  https://download.docker.com/linux/debian \
-  $(lsb_release -cs) stable" > /etc/apt/sources.list.d/docker.list
-RUN apt-get update && apt-get install -y docker-ce-cli
-USER jenkins
-RUN jenkins-plugin-cli --plugins "blueocean:1.27.9 docker-workflow:572.v950f58993843"
+# Use an official Maven runtime as a parent image
+FROM maven:3.8.4-openjdk-11 AS build
+
+# Set the working directory in the container
+WORKDIR /usr/src/app
+
+# Copy the pom.xml file to the container
+COPY ./pom.xml .
+
+# Copy the rest of the application code to the container
+COPY ./src ./src
+
+# Build the application
+RUN mvn clean install
+
+# Use the official OpenJDK image for the final runtime
+FROM openjdk:11-jre-slim
+
+# Set the working directory in the container
+WORKDIR /usr/src/app
+
+# Copy the JAR file from the build stage to the runtime image
+COPY --from=build /usr/src/app/target/your-application.jar ./app.jar
+
+# Expose the port the application runs on
+EXPOSE 8080
+
+# Specify the command to run on container start
+CMD ["java", "-jar", "app.jar"]
