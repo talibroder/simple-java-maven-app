@@ -18,18 +18,22 @@ jobs:
       with:
         distribution: 'adopt'
         java-version: '11'
-
+        
     - name: Increment Patch Version
       run: |
-        mvn versions:set -DnewVersion=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout).1
+        # Increment the patch version in the pom.xml file
+        NEW_VERSION_NUMBER=$(mvn build-helper:parse-version help:evaluate -Dexpression=project.version -q -DforceStdout | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')
+        mvn versions:set -DnewVersion=$NEW_VERSION_NUMBER
         git add pom.xml
-        git commit -m "Increment patch version [skip ci]" || true
-        git push origin main || true
+        git commit -m "Update version in pom.xml to $NEW_VERSION_NUMBER [skip ci]" || true
+        git push origin master
+        
     - name: Build and Push Docker Image
       run: |
         docker build -t talibro/simple-java-maven-app:latest .
         echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
         docker push talibro/simple-java-maven-app:latest
+        
     - name: Push to GitHub
       run: |
         git push origin master
