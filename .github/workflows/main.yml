@@ -3,7 +3,7 @@ name: Maven and Docker Workflow
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   build:
@@ -19,11 +19,16 @@ jobs:
         distribution: 'adopt'
         java-version: '11'
 
-    - name: Increment Patch Version
+    - name: Calculate New Version
+      id: calculate_version
+      run: echo "VERSION=$(($(cat pom.xml | grep -oP '(?<=<version>)[^<]+') + 1))" >> $GITHUB_ENV
+
+    - name: Update Version in POM
       run: |
-        mvn versions:set -DnewVersion=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout).1
+        NEW_VERSION_NUMBER=$(echo $VERSION)
+        mvn versions:set -DnewVersion=$NEW_VERSION_NUMBER
         git add pom.xml
-        git commit -m "Increment patch version [skip ci]" || true
+        git commit -m "Update version in pom.xml to $NEW_VERSION_NUMBER [skip ci]" || true
         git push origin main || true
 
     - name: Build and Push Docker Image
