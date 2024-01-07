@@ -51,9 +51,10 @@ jobs:
         git push origin master
 
     - name: Set up Ansible
-      uses: appleboy/ansible-action@v2.0.0
+      uses: docker://docker.pkg.github.com/appleboy/ansible-action/ansible-action:v2
       with:
         path: ./ansible
+
 
     - name: Run Ansible playbook
       run: ansible-playbook -i ansible/inventory.ini ansible/my_playbook.yml
