@@ -50,14 +50,11 @@ jobs:
       run: |
         git push origin master
 
-    - name: Set up Ansible
-      uses: docker://docker.pkg.github.com/appleboy/ansible-action/ansible-action:v2
+    - name: Run playbook
+      uses: dawidd6/action-ansible-playbook@v2
       with:
-        path: ./ansible
-
-
-    - name: Run Ansible playbook
-      run: ansible-playbook -i ansible/inventory.ini ansible/my_playbook.yml
-      env:
-        PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-
+        playbook: my_playbook.yml
+        directory: ./
+        key: ${{secrets.SSH_PRIVATE_KEY}}
+        inventory: |
+          [all]
