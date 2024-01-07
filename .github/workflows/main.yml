@@ -26,7 +26,8 @@ jobs:
           -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion} \
           versions:commit
 
-    - name: Push Patch Version   
+    - name: Push Patch Version 
+       run: |
         git add pom.xml
         git commit -m "Update version in pom.xml"
         git push origin master
