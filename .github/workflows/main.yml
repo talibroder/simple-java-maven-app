@@ -28,6 +28,8 @@ jobs:
 
     - name: Push Patch Version 
       run: |
+        git config --global user.email "talibroder@gmail.com"
+        git config --global user.name "talibroder"
         git add pom.xml
         git commit -m "Update version in pom.xml"
         git push origin master
