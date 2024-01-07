@@ -27,7 +27,7 @@ jobs:
           versions:commit
 
     - name: Push Patch Version 
-       run: |
+      run: |
         git add pom.xml
         git commit -m "Update version in pom.xml"
         git push origin master
