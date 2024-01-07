@@ -23,8 +23,8 @@ jobs:
       run: |
         # Increment the patch version in the pom.xml file
         mvn build-helper:parse-version versions:set \
-        -DnewVersion=${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.nextIncrementalVersion} \
-        versions:commit
+          -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion} \
+          versions:commit
 
     - name: Push Patch Version   
         git add pom.xml
