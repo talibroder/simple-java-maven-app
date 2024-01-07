@@ -19,6 +19,12 @@ jobs:
         distribution: 'adopt'
         java-version: '11'
 
+    - name: Configure Git Identity
+      run: |
+        git config user.email "you@example.com"
+        git config user.name "Your Name"
+
+
     - name: Increment Maven Version
       run: |
         mvn versions:set -DnewVersion=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
