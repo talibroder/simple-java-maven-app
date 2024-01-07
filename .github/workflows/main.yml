@@ -51,7 +51,7 @@ jobs:
         git push origin master
 
     - name: Set up Ansible
-      uses: appleboy/ansible-action@v2
+      uses: appleboy/ansible-action@v2.0.0
       with:
         path: ./ansible
 
