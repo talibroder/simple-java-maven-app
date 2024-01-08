@@ -53,8 +53,9 @@ jobs:
     - name: Run playbook
       uses: dawidd6/action-ansible-playbook@v2
       with:
-        playbook: ansibel/playbook.yml
+        playbook: playbook.yml
         directory: ./ansibel
         key: ${{secrets.SSH_PRIVATE_KEY}}
         inventory: |
           [all]
+          ${{ secrets.EC2_IP }}
