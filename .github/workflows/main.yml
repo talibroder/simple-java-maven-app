@@ -55,7 +55,7 @@ jobs:
       with:
         playbook: playbook.yml
         directory: ./ansibel
-        key: ${{secrets.SSH_PRIVATE_KEY}}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
         inventory: |
           [all]
           ${{ secrets.EC2_IP }}
