@@ -2,6 +2,7 @@
 - name: Deploy App with Docker
   hosts: all
   become: yes  # Run tasks with elevated privileges (sudo)
+  user: ubuntu
 
   tasks:
     #* Docker installation
