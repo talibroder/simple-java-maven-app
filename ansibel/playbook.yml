@@ -1,6 +1,6 @@
 ---
 - name: Deploy App with Docker
-  hosts: ec2_instances
+  hosts: all
   become: yes  # Run tasks with elevated privileges (sudo)
 
   tasks:
