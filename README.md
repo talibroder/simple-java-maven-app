@@ -31,6 +31,15 @@ Following the Docker image creation, this step pushes changes, including the upd
 
 The final step deploys the Java application on a remote server using Ansible playbook. It connects to the server using the provided SSH key, and the playbook specified in `playbook.yml` is executed. The inventory file (`./ansibel/.ansible_inventory`) contains the details of the target server, such as IP address.
 
+## Usage
+
+To use this workflow, ensure that you have the following secrets set in your GitHub repository:
+
+- `DOCKER_USERNAME`: Docker Hub username.
+- `DOCKER_PASSWORD`: Docker Hub password or access token.
+- `SSH_PRIVATE_KEY`: Private SSH key for Ansible playbook.
+- `EC2_IP`: IP address of the target EC2 instance.
+
 
 
 
