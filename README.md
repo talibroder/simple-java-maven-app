@@ -4,8 +4,20 @@
 
 This GitHub Actions workflow automates the Maven build, version increment, Docker image creation, and Ansible playbook deployment for Java project.
 
-## Workflow Overview
 
+## How to Setup the pipeline, trigger it and view the results:
+
+## Usage
+
+To use this workflow, ensure that you have the following secrets set in your GitHub repository:
+    - Go to *settings --> security --> Secrets and variables --> Actions*.
+    - Add the following secrets using these exact names:
+	*`DOCKER_USERNAME`: Docker Hub username.
+	*`DOCKER_PASSWORD`: Docker Hub password or access token.
+	*`SSH_PRIVATE_KEY`: Private SSH key for Ansible playbook.
+	*`EC2_IP`: IP address of the target EC2 instance.
+	
+## Workflow Overview
 
 ### 1. Increment Patch Version
 
@@ -31,14 +43,6 @@ Following the Docker image creation, this step pushes changes, including the upd
 
 The final step deploys the Java application on a remote server using Ansible playbook. It connects to the server using the provided SSH key, and the playbook specified in `playbook.yml` is executed. The inventory file (`./ansibel/.ansible_inventory`) contains the details of the target server, such as IP address.
 
-## Usage
-
-To use this workflow, ensure that you have the following secrets set in your GitHub repository:
-
-- `DOCKER_USERNAME`: Docker Hub username.
-- `DOCKER_PASSWORD`: Docker Hub password or access token.
-- `SSH_PRIVATE_KEY`: Private SSH key for Ansible playbook.
-- `EC2_IP`: IP address of the target EC2 instance.
 
 
 
