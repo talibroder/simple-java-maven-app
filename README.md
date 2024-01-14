@@ -1,49 +1,78 @@
-# Maven and Docker Workflow
 
-[![Maven and Docker Workflow](https://github.com/talibroder/simple-java-maven-app/actions/workflows/main.yml/badge.svg)](https://github.com/talibroder/simple-java-maven-app/actions/workflows/main.yml)
+# Java App -  Docker Image Update & deployment Pipeline
+In This project a simple *"Hello World!"* Java app is updated using a GitHub Actions workflow for re-building the updated app, testing, and deploying a Docker image. The pipeline is triggered on push events.
 
-This GitHub Actions workflow automates the Maven build, version increment, Docker image creation, and Ansible playbook deployment for Java project.
+## Features 
+Pipeline is defined in a yaml config file *".github/workflows/maven.yml"*.
 
+The Pipeline uses *Maven* to build and test the Java app.
 
-## How to Setup the pipeline, trigger it and view the results:
+The pipline updates a *Docker* image of the app using an included *Dockerfile*.
 
-## Usage
+A mvn build-helper:parse-version is used in the pipeline to increase the app version on each pipeline run. the version is updated in the "pom.xml" file.
 
-To use this workflow, ensure that you have the following secrets set in your GitHub repository:
-    - Go to *settings --> security --> Secrets and variables --> Actions*.
-    - Add the following secrets using these exact names:
-	*`DOCKER_USERNAME`: Docker Hub username.
-	*`DOCKER_PASSWORD`: Docker Hub password or access token.
-	*`SSH_PRIVATE_KEY`: Private SSH key for Ansible playbook.
-	*`EC2_IP`: IP address of the target EC2 instance.
-	
-## Workflow Overview
+The pipeline pushes the Docker image updates in a *DockerHub* registry with *<version>* and *"latest"* tags.
 
-### 1. Increment Patch Version
+The pipeline runs an *Ansible* playbook that deploys the app on *EC2*.
 
-This step is responsible for incrementing the patch version in the `pom.xml` file. It uses Maven build-helper plugin to parse the current version, increments the patch version, commits the change, and pushes it back to the repository.
+The app execution can be viewed in a terminal using *"AWS EC2 Instance Connect"* platform.
 
-### 2. Run Tests
+## Installation
+How to Setup the pipeline, trigger it and view the results:
 
-To maintain code quality, this step executes Maven tests to ensure that the project passes all defined tests.
+1. **Fork and pull this repo:**
+    - In the main menu of this repo click "Fork" to copy to your GitHub account.
+    - On your local machine initialize git and pull your new repo.
 
-### 3. Push Patch Version
+    ```bash
+    git init
+    git pull <url of your new repo>
+     
+    ```
+     
+2. **Add GitHub Actions secrets:**
+    Go to settings --> security --> Secrets and variables --> Actions.
+    Add the following secrets using these exact names:
+    - DOCKER_USERNAME - Dockerhub user for creating a registry.
+    - DOCKER_PASSWORD - Dockerhub password.
+    - EC2_IP - enter: [webserver] <ip target where app will run> ansible_user=ubuntu.
+    - SSH_PRIVATE_KEY - content of your pem file (private key).
 
-After incrementing the version, this step commits and pushes the updated version back to the repository. This helps in keeping track of version changes and ensuring that the latest version is reflected in the repository.
+3. **Create a EC2 instance based ubuntu image.**
 
-### 4. Build and Push Docker Image
+4. **Make some changes to repo, commit and push:**
 
-This step builds a Docker image for the Java application. It tags the image with both the project version and `latest`. The Docker image is then pushed to the specified Docker registry (e.g., Docker Hub). This facilitates easy deployment of the application in a containerized environment.
+    ```bash
+    git add .
+    git commit -m "My changes commit"
+    git push origin master
+    ```
+    
+5. **View pipeline workflow in GitHub Actions:**
+    - Click the "Actions" tab to follow the pipeline workflow of your last commit.
 
-### 5. Push to GitHub
+6. **Connect and review deployed EC2:**
+    - In the EC2 service dashboard navigate to "Instances".
+    - Locate your deployed EC2.
+    - Navigate to "Connect", choose "EC2 instance connect" and click "Connect".
+    - Run the following command: 
+    
+    ```bash
+    sudo docker logs $(sudo docker ps -aq)
+    
+    ```
+    - Check the log output: Should return "Hello World!" message.
 
-Following the Docker image creation, this step pushes changes, including the updated version, to the GitHub repository. It ensures that the GitHub repository is up-to-date with the latest changes in the project.
+## Workflow Jobs:
 
-### 6. Run Ansible Playbook
+1. **Build and test with Maven:**
+    - Builds and tests the new java app update using Maven.
 
-The final step deploys the Java application on a remote server using Ansible playbook. It connects to the server using the provided SSH key, and the playbook specified in `playbook.yml` is executed. The inventory file (`./ansibel/.ansible_inventory`) contains the details of the target server, such as IP address.
+2. **Docker image build and push:**
+    - Updates the version file with new version tag.
+    - Builds a new updated Docker image.
+    - Pushes the new image to DockerHub with "version" and "latest" tags.
 
-
-
-
-
+3. **Deployment to EC2:**
+    - Using ansible playbook: Logs into instance AWS-cli using GitHub Actions Secrets. 
+    Pulls and runs the updated image as a Docker container.
